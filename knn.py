@@ -1,9 +1,10 @@
 #-------------------------------------------------------------------------
 # AUTHOR: Michael Acosta
 # FILENAME: knn.py
-# SPECIFICATION: description of the program
+# SPECIFICATION: Take a set of labeled points, and using leave-one-out 
+#               cross validation, find the error rate of the KNN algorithm.
 # FOR: CS 4210- Assignment #2
-# TIME SPENT: 50 minutes
+# TIME SPENT: 2 hours
 #-----------------------------------------------------------*/
 
 #IMPORTANT NOTE: DO NOT USE ANY ADVANCED PYTHON LIBRARY TO COMPLETE THIS CODE SUCH AS numpy OR pandas. You have to work here only with standard vectors and arrays
@@ -21,31 +22,45 @@ with open('binary_points.csv', 'r') as csvfile:
       if i > 0: #skipping the header
          db.append (row)
 
+correct_predictions = 0
+incorrect_predictions = 0
+
 #loop your data to allow each instance to be your test set
 for i, instance in enumerate(db):
 
     #add the training features to the 2D array X removing the instance that will be used for testing in this iteration. For instance, X = [[1, 3], [2, 1,], ...]]. Convert each feature value to
     # float to avoid warning messages
-    X = db.copy() #make a copy of file read in
-    # remove the class value
-    for line in X:
-       for feature in line:
-          feature = float(feature)
+    X = [
+        [2.0,1.0],
+        [4.0,1.0],
+        [3.0,2.0],
+        [0.0,3.0],
+        [3.0,3.0],
+        [4.0,3.0],
+        [1.0,4.0],
+        [2.0,4.0],
+        [4.0,4.0],
+        [0.0,5.0],
+    ]
     # remove the instance used for test
-    testSample = X.pop(i)
+    X.pop(i)
 
     #transform the original training classes to numbers and add to the vector Y removing the instance that will be used for testing in this iteration. For instance, Y = [1, 2, ,...]. Convert each
     #  feature value to float to avoid warning messages
     ClassValue = {
-       '-': float(1),
-       '+': float(2),
+       '-': 1.0,
+       '+': 2.0,
     }
-    Y = [0] * len(X) #create empty list
-    for i, row in enumerate(X):
-        Y[i] = ClassValue[row[2]] #transform label based on dictionary
+    Y = [0] * len(db) #create empty list
+    for j, row in enumerate(db):
+        Y[j] = ClassValue[row[2]] #transform label based on dictionary
+    # remove the instance used for test
+    Y.pop(i)
 
     #store the test sample of this iteration in the vector testSample
+    testSample = instance.copy()
     testSample[2] = ClassValue[testSample[2]] #transform label based on dictionary
+    testSample = [float(i) for i in testSample]
 
     #fitting the knn to the data
     clf = KNeighborsClassifier(n_neighbors=1, p=2)
@@ -53,10 +68,14 @@ for i, instance in enumerate(db):
 
     #use your test sample in this iteration to make the class prediction. For instance:
     #class_predicted = clf.predict([[1, 2]])[0]
-    #--> add your Python code here
+    class_predicted = clf.predict([[testSample[0], testSample[1]]])[0]
 
     #compare the prediction with the true label of the test instance to start calculating the error rate.
-    #--> add your Python code here
+    if class_predicted == testSample[2]:
+       correct_predictions += 1
+    else:
+       incorrect_predictions += 1
 
 #print the error rate
-#--> add your Python code here
+error_rate = incorrect_predictions / (correct_predictions + incorrect_predictions)
+print("Error rate is " + str(error_rate))
