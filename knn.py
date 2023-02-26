@@ -30,18 +30,9 @@ for i, instance in enumerate(db):
 
     #add the training features to the 2D array X removing the instance that will be used for testing in this iteration. For instance, X = [[1, 3], [2, 1,], ...]]. Convert each feature value to
     # float to avoid warning messages
-    X = [
-        [2.0,1.0],
-        [4.0,1.0],
-        [3.0,2.0],
-        [0.0,3.0],
-        [3.0,3.0],
-        [4.0,3.0],
-        [1.0,4.0],
-        [2.0,4.0],
-        [4.0,4.0],
-        [0.0,5.0],
-    ]
+    X = [0] * len(db)
+    for counter, point in enumerate(db):
+       X[counter] = [float(db[counter][0]), float(db[counter][1])]
     # remove the instance used for test
     X.pop(i)
 
